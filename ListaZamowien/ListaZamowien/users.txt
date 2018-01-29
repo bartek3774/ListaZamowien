@@ -1,1 +1,2 @@
 1 Bartek Stepien 123 Administrator
+3 Marian Kowalski 3h Uzytkownik
