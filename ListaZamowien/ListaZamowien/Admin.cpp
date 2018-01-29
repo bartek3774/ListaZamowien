@@ -13,9 +13,9 @@ Admin::Admin(SingIn log1)
 
 void Admin::startPage()
 {
-	cout << "Witaj " << SingIn::login << endl;
+	cout << "Witaj " << SingIn::name << " " <<  SingIn::surname << endl;
 	cout << "Typ konta: " << SingIn::accountType << endl;
-	cout << "1. Zarzadzanie uzytkownikami\n2. Dodaj zamowienie\n3. Lista wszystkich zamowien\n4. Lista zamowien uzytkownika\n5. Wyjdz" << endl;
+	cout << "1. Zarzadzanie uzytkownikami\n2. Dodaj zamowienie\n3. Lista wszystkich zamowien\n4. Lista zamowien uzytkownika\n5. Wyloguj\n6. Wyjdz" << endl;
 	string x;
 	cin >> x;
 	if (x == "1")
@@ -41,10 +41,20 @@ void Admin::startPage()
 		string id;
 		cout << "Podaj login uzytkownika" << endl;
 		cin >> id;
+		if(checkUser(id))
 		printOrder(id);
+		else
+		{
+			system("cls");
+			cout << "Podany uzytkownik nie istnieje" << endl;
+		}
 		startPage();
 	}
 	else if (x == "5")
+	{
+		
+	}
+	else if (x == "6")
 	{
 		exit(0);
 	}
@@ -100,6 +110,12 @@ void Admin::addUser()
 
 	cout << "Podaj login uzytkownika" << endl;
 	cin >> id;
+	if (checkUser(id))
+	{
+		system("cls");
+		cout << "Podany uzytkownik istnieje" << endl;
+		startPage(1);
+	}
 	cout << "Podaj imie uzytkownika" << endl;
 	cin >> name;
 	cout << "Podaj nazwisko uzytkownika" << endl;
@@ -226,7 +242,7 @@ void Admin::printOrder()
 {
 	ifstream ordersFile;
 	ordersFile.open("orders.txt", ios::app);
-	cout << "Zamowienia" << endl;
+	cout << "Zamowienia wszystkich uzytkownikow" << endl;
 	cout << endl << "-----------------------------------------------------------------------------------------------------------" << endl;
 	cout << "Numer zamowienia Login Przedmiot Ilosc Cena jednostkowa Wartosc" << endl;
 	float sum = 0;
@@ -247,18 +263,45 @@ void Admin::printOrder()
 	ordersFile.close();
 	cout << "-----------------------------------------------------------------------------------------------------------" << endl ;
 	cout << "Laczna kwota zamowien: " << sum << "zl." << endl;
-	cout << "Laczna liczba zamowien: " << x << endl << endl << endl;
+	cout << "Laczna liczba zamowien: " << x << endl;
+	cout << "Srednia cena zamowienia: " << roundf(((sum / x) * 100)) / 100 << endl << endl << endl;
 }
 
 void Admin::printOrder(string id)
 {
+	ifstream ordersFile;
+	ordersFile.open("orders.txt", ios::app);
+	cout << "Zamowienia uzytkownika " << id << endl;
+	cout << endl << "-----------------------------------------------------------------------------------------------------------" << endl;
+	cout << "Numer zamowienia Login Przedmiot Ilosc Cena jednostkowa Wartosc" << endl;
+	float sum = 0;
+	int x = 0;
+	while (!ordersFile.eof())
+	{
+		string idTmp, loginTmp, itemTmp;
+		int quantityTmp;
+		float priceTmp, priceSumTmp;
+		ordersFile >> idTmp >> loginTmp >> itemTmp >> quantityTmp >> priceTmp >> priceSumTmp;
+		if (idTmp.length() > 1 && loginTmp == id)
+		{
+			cout << idTmp << " " << loginTmp << " " << itemTmp << " " << quantityTmp << "szt " << priceTmp << "zl " << priceSumTmp << "zl" << endl;
+			sum += priceSumTmp;
+			x++;
+		}
+	}
+	ordersFile.close();
+	cout << "-----------------------------------------------------------------------------------------------------------" << endl;
+	cout << "Laczna kwota zamowien: " << sum << "zl." << endl;
+	cout << "Laczna liczba zamowien: " << x << endl;
+	cout << "Srednia cena zamowienia: " << roundf(((sum / x) * 100)) / 100 << endl << endl << endl;
 }
 
 int Admin::idGenerator()
 {
 		time_t czas;
 		srand(time(&czas));
-		return rand() % 5000 + 1;
+		int x = (rand() % 5000 + 1);
+		return x;
 }
 
 void Admin::deleteRow(string path, size_t row)
@@ -266,13 +309,14 @@ void Admin::deleteRow(string path, size_t row)
 	vector < string > vec;
 	ifstream in(path.c_str());
 	string tmp;
-	while (getline(in, tmp)) vec.push_back(tmp);
+	while (getline(in, tmp)) 
+		vec.push_back(tmp);
 
 	in.close();
 	ofstream out(path.c_str());
-	for (size_t i = 0; i < vec.size(); ++i) {
+	for (size_t i = 0; i < vec.size(); ++i) 
+	{
 		if (i + 1 != row) out << vec[i] << endl;
-
 	}
 	out.close();
 }

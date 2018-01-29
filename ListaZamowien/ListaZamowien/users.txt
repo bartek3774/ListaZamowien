@@ -1,2 +1,4 @@
 1 Bartek Stepien 123 Administrator
 3 Marian Kowalski 3h Uzytkownik
+2 Jan Kowalski 2h Uzytkownik
+4 Monika Krawczyk 4h Uzytkownik
