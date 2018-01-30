@@ -15,7 +15,7 @@ void Admin::startPage()
 {
 	cout << "Witaj " << SingIn::name << " " <<  SingIn::surname << endl;
 	cout << "Typ konta: " << SingIn::accountType << endl;
-	cout << "1. Zarzadzanie uzytkownikami\n2. Dodaj zamowienie\n3. Lista wszystkich zamowien\n4. Lista zamowien uzytkownika\n5. Wyloguj\n6. Wyjdz" << endl;
+	cout << "1. Zarzadzanie uzytkownikami\n2. Dodaj zamowienie\n3. Lista wszystkich zamowien\n4. Lista zamowien uzytkownika\n5. Usun zamowienie\n6. Wyloguj\n7. Wyjdz" << endl;
 	string x;
 	cin >> x;
 	if (x == "1")
@@ -52,9 +52,15 @@ void Admin::startPage()
 	}
 	else if (x == "5")
 	{
-		
+		system("cls");
+		removeOrder();
+		startPage();
 	}
 	else if (x == "6")
+	{
+		
+	}
+	else if (x == "7")
 	{
 		exit(0);
 	}
@@ -235,6 +241,47 @@ void Admin::addOrder()
 	{
 		system("cls");
 		cout << "Nie ma takiego uzytkownika" << endl;
+	}
+}
+
+void Admin::removeOrder()
+{
+	string id, x;
+	cout << "Podaj numer zamowienia" << endl;
+	cin >> id;
+	cout << "Czy napewno chcesz trwale usunac zamowienie nr: " << id << " (t/n)" << endl;
+	cin >> x;
+	if (x == "t")
+	{
+		ifstream ordersFile;
+		ordersFile.open("orders.txt", ios::app);
+
+		int i = 1;
+		while (!ordersFile.eof())
+		{
+			string idTmp, loginTmp, itemTmp;
+			int quantityTmp;
+			float priceTmp, priceSumTmp;
+			ordersFile >> idTmp >> loginTmp >> itemTmp >> quantityTmp >> priceTmp >> priceSumTmp;
+			if (idTmp == id)
+			{
+				ordersFile.close();
+				deleteRow("orders.txt", i);
+				system("cls");
+				cout << "Zamowienie usuniete" << endl;
+				startPage();
+				break;
+			}
+			i++;
+		}
+		ordersFile.close();
+		system("cls");
+		cout << "Brak zamowienia o numerze " << id << endl;
+	}
+	else
+	{
+		system("cls");
+		cout << "Blad usuwania zamowienia" << endl;
 	}
 }
 

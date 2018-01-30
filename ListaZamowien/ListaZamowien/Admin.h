@@ -11,6 +11,7 @@ public:
 	void removeUser();
 	void printUsers();
 	void addOrder();
+	void removeOrder();
 	void printOrder();
 	void printOrder(string id);
 	int idGenerator();
